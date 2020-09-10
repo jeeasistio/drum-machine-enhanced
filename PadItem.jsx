@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useSound from 'use-sound';
 import {
   makeStyles,
@@ -54,15 +54,39 @@ const PadItem = ({ color, sound }) => {
   const [play] = useSound(sound);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState();
+  const [intervalValue, setIntervalValue] = useState(0);
+  const [timerValue, setTimerValue] = useState(0);
   
   const openMenu = (e) => {
     setMenuIsOpen(!menuIsOpen);
     setMenuAnchor(e.target);
   }
   
-  const closeMenu = () => {
-    setMenuIsOpen(false);
+  const playInterval = useRef();
+  const playTimeOut = useRef();
+  
+  const start = () => {
+    playInterval.current = setInterval(play, intervalValue * 1000);
+    setTimeout(() => stop(), timerValue * 1000);
   }
+  
+  const stop = () => {
+    clearInterval(playInterval.current);
+  }
+  
+  useEffect(() => {
+    play();
+    clearInterval(playInterval.current);
+    intervalValue <= 0 ?
+      clearInterval(playInterval.current)
+    : playInterval.current = setInterval(play, intervalValue * 1000)
+    
+    clearTimeout(playTimeOut.current);
+    setTimeout(() => {
+      clearInterval(playInterval.current)
+    }, timerValue * 1000)
+    
+  }, [intervalValue, timerValue])
 
   return (
     <Box className={classes.padCtn}>
@@ -70,15 +94,20 @@ const PadItem = ({ color, sound }) => {
       <IconButton className={classes.optionStyle} onClick={openMenu}>
         <Icon>settings</Icon>
       </IconButton>
-      <Menu classes={{paper: classes.menuRoot}} anchorEl={menuAnchor} open={menuIsOpen} onClose={closeMenu}>
+      <Menu
+        classes={{paper: classes.menuRoot}}
+        anchorEl={menuAnchor} 
+        open={menuIsOpen} 
+        onClose={() => setMenuIsOpen(false)}
+      >
         <MenuItem className={classes.menuItem}>
           <Slider
             className={classes.sliderStyle}
-            defaultValue={0}
-            step={0.5}
+            value={intervalValue}
+            step={0.1}
             min={0}
             max={5}
-            marks
+            onChange={(e, v) => setIntervalValue(v)}
             valueLabelDisplay="auto"
             orientation="vertical"
           />
@@ -87,15 +116,15 @@ const PadItem = ({ color, sound }) => {
         <MenuItem className={classes.menuItem}>
           <Slider
             className={classes.sliderStyle}
-            defaultValue={0}
-            step={0.5}
+            value={timerValue}
+            step={1}
             min={0}
-            max={5}
-            marks
+            max={60}
+            onChange={(e, v) => setTimerValue(v)}
             valueLabelDisplay="auto"
             orientation="vertical"
           />
-          <Typography variant="subtitle2">Delay</Typography>
+          <Typography variant="subtitle2">Timer</Typography>
         </MenuItem>
       </Menu>
     </Box>
