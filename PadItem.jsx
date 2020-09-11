@@ -12,7 +12,9 @@ import {
   Typography
 } from '@material-ui';
 
-const PadItem = ({ color, sound, allPlaying }) => {
+const PadItem = ({ color, sound, allPlaying, resetted }) => {
+
+  const [play, {isPlaying}] = useSound(sound);
 
   const useStyles = makeStyles(theme => ({
     padCtn: {
@@ -25,10 +27,12 @@ const PadItem = ({ color, sound, allPlaying }) => {
       minHeight: 60,
       maxHeight: 60,
       minWidth: 60,
-      maxWidth: 60
+      maxWidth: 60, 
+      transform: isPlaying ? 'scale(1.2)' : 'scale(1)', 
+      transition: 'transform 0.2s'
     },
     optionStyle: {
-      color: '#fff'
+      color: '#ccc'
     },
     sliderStyle: {
       minHeight: 100,
@@ -51,14 +55,15 @@ const PadItem = ({ color, sound, allPlaying }) => {
 
   const classes = useStyles();
 
-  const [play] = useSound(sound);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState();
   const [intervalValue, setIntervalValue] = useState(0);
   const [timerValue, setTimerValue] = useState(0);
+  const [delayValue, setDelayValue] = useState(0);
   const [playOpt, setPlayOpt] = useState({
     int: 0,
-    tim: 0
+    tim: 0,
+    del: 0
   });
   
   const playInterval = useRef();
@@ -70,13 +75,15 @@ const PadItem = ({ color, sound, allPlaying }) => {
   }
   
   const start = () => {
-    play();
-    stop();
-    playInterval.current = setInterval(play, playOpt.int * 1000);
-    clearTimeout(playTimeout.current)
     setTimeout(() => {
+      play();
       stop();
-    }, playOpt.tim * 1000)
+      playInterval.current = setInterval(play, playOpt.int * 1000);
+      clearTimeout(playTimeout.current)
+      setTimeout(() => {
+        stop();
+      }, playOpt.tim * 1000)
+    }, playOpt.del * 1000)
   }
   
   const stop = () => {
@@ -86,16 +93,24 @@ const PadItem = ({ color, sound, allPlaying }) => {
   const playBeat = () => {
     setPlayOpt({
       int: intervalValue, 
-      tim: timerValue
+      tim: timerValue,
+      del: delayValue
     }) 
   }
   
   const stopBeat = () => {
     setPlayOpt({
       int: 0,
-      tim: 0
+      tim: 0,
+      del: 0
     })
     stop();
+  }
+  
+  const resetConfig = () => {
+    setIntervalValue(0);
+    setTimerValue(0);
+    setDelayValue(0);
   }
   
   useEffect(() => {
@@ -105,6 +120,13 @@ const PadItem = ({ color, sound, allPlaying }) => {
   useEffect(() => {
     allPlaying ? playBeat() : stopBeat();
   }, [allPlaying])
+  
+  useEffect(() => {
+     if (resetted) {
+       resetConfig();
+       stopBeat();
+     }
+  }, [resetted])
 
   return (
     <Box className={classes.padCtn}>
@@ -143,6 +165,19 @@ const PadItem = ({ color, sound, allPlaying }) => {
             orientation="vertical"
           />
           <Typography variant="subtitle2">Timer</Typography>
+        </MenuItem>
+        <MenuItem className={classes.menuItem}>
+          <Slider
+            className={classes.sliderStyle}
+            value={delayValue} 
+            step={0.2}
+            min={0}
+            max={30}
+            onChange={(e, v) => setDelayValue(v)}
+            valueLabelDisplay="auto"
+            orientation="vertical"
+          />
+          <Typography variant="subtitle2">Delay</Typography>
         </MenuItem>
       </Menu>
     </Box>

@@ -6,7 +6,10 @@ import {
   CssBaseline,
   Typography,
   Box, 
-  Button
+  Button, 
+  Dialog, 
+  DialogContent, 
+  DialogActions
 } from '@material-ui';
 
 const pads = [
@@ -51,7 +54,7 @@ const App = () => {
       height: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'space-between',
+      justifyContent: 'space-around',
       alignItems: 'center',
       background: '#000',
       color: '#fff'
@@ -67,9 +70,17 @@ const App = () => {
   const classes = useStyles();
   
   const [allPlaying, setAllPlaying] = useState(false);
+  const [resetted, setResetted] = useState(false);
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
   
   const playOrStop = () => {
     setAllPlaying(!allPlaying);
+  }
+  
+  const resetFunc = () => {
+    setResetted(true);
+    setTimeout(() => setResetted(false), 500);
+    setDialogIsOpen(false);
   }
 
   return (
@@ -80,14 +91,26 @@ const App = () => {
         </Box>
         <Box className={classes. padsRoot}>
           {pads.map( ({color, sound}) => (
-            <PadItem color={color} sound={sound} allPlaying={allPlaying} />
+            <PadItem color={color} sound={sound} allPlaying={allPlaying} resetted={resetted} />
           ))}
         </Box>
         <Box>
-          <Button style={{color: '#fff'}} onClick={playOrStop}>
+          <Button size="large" style={{color: '#fff'}} onClick={playOrStop}>
             {allPlaying ? 'Stop' : 'Play'}
           </Button>
+          <Button size="large" style={{color: '#f55'}} onClick={() => setDialogIsOpen(true)}>
+            Reset
+          </Button>
         </Box>
+       <Dialog open={dialogIsOpen} onClose={() => setDialogIsOpen(false)}>
+          <DialogContent>
+            <Typography>Are you sure you want to reset all configurations?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDialogIsOpen(false)}>No</Button>
+            <Button onClick={resetFunc} style={{color: '#f55'}}>Yes</Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </CssBaseline>
   )
