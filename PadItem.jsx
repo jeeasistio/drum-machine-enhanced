@@ -57,17 +57,22 @@ const PadItem = ({ color, sound }) => {
   const [intervalValue, setIntervalValue] = useState(0);
   const [timerValue, setTimerValue] = useState(0);
   
+  const playInterval = useRef();
+  const playTimeout = useRef();
+  
   const openMenu = (e) => {
     setMenuIsOpen(!menuIsOpen);
     setMenuAnchor(e.target);
   }
   
-  const playInterval = useRef();
-  const playTimeOut = useRef();
-  
   const start = () => {
+    play();
+    stop();
     playInterval.current = setInterval(play, intervalValue * 1000);
-    setTimeout(() => stop(), timerValue * 1000);
+    clearTimeout(playTimeout.current)
+    setTimeout(() => {
+      stop();
+    }, timerValue * 1000)
   }
   
   const stop = () => {
@@ -75,17 +80,7 @@ const PadItem = ({ color, sound }) => {
   }
   
   useEffect(() => {
-    play();
-    clearInterval(playInterval.current);
-    intervalValue <= 0 ?
-      clearInterval(playInterval.current)
-    : playInterval.current = setInterval(play, intervalValue * 1000)
-    
-    clearTimeout(playTimeOut.current);
-    setTimeout(() => {
-      clearInterval(playInterval.current)
-    }, timerValue * 1000)
-    
+    intervalValue <= 0 ? stop() : start();
   }, [intervalValue, timerValue])
 
   return (
@@ -103,7 +98,7 @@ const PadItem = ({ color, sound }) => {
         <MenuItem className={classes.menuItem}>
           <Slider
             className={classes.sliderStyle}
-            value={intervalValue}
+            defaultValue={0} 
             step={0.1}
             min={0}
             max={5}
@@ -116,7 +111,7 @@ const PadItem = ({ color, sound }) => {
         <MenuItem className={classes.menuItem}>
           <Slider
             className={classes.sliderStyle}
-            value={timerValue}
+            defaultValue={0} 
             step={1}
             min={0}
             max={60}
