@@ -12,7 +12,7 @@ import {
   Typography
 } from '@material-ui';
 
-const PadItem = ({ color, sound }) => {
+const PadItem = ({ color, sound, allPlaying }) => {
 
   const useStyles = makeStyles(theme => ({
     padCtn: {
@@ -56,6 +56,10 @@ const PadItem = ({ color, sound }) => {
   const [menuAnchor, setMenuAnchor] = useState();
   const [intervalValue, setIntervalValue] = useState(0);
   const [timerValue, setTimerValue] = useState(0);
+  const [playOpt, setPlayOpt] = useState({
+    int: 0,
+    tim: 0
+  });
   
   const playInterval = useRef();
   const playTimeout = useRef();
@@ -68,20 +72,39 @@ const PadItem = ({ color, sound }) => {
   const start = () => {
     play();
     stop();
-    playInterval.current = setInterval(play, intervalValue * 1000);
+    playInterval.current = setInterval(play, playOpt.int * 1000);
     clearTimeout(playTimeout.current)
     setTimeout(() => {
       stop();
-    }, timerValue * 1000)
+    }, playOpt.tim * 1000)
   }
   
   const stop = () => {
     clearInterval(playInterval.current);
   }
   
+  const playBeat = () => {
+    setPlayOpt({
+      int: intervalValue, 
+      tim: timerValue
+    }) 
+  }
+  
+  const stopBeat = () => {
+    setPlayOpt({
+      int: 0,
+      tim: 0
+    })
+    stop();
+  }
+  
   useEffect(() => {
-    intervalValue <= 0 ? stop() : start();
-  }, [intervalValue, timerValue])
+    playOpt.int <= 0 ? stop() : start();
+  }, [playOpt.int, playOpt.tim])
+  
+  useEffect(() => {
+    allPlaying ? playBeat() : stopBeat();
+  }, [allPlaying])
 
   return (
     <Box className={classes.padCtn}>
@@ -98,7 +121,7 @@ const PadItem = ({ color, sound }) => {
         <MenuItem className={classes.menuItem}>
           <Slider
             className={classes.sliderStyle}
-            defaultValue={0} 
+            value={intervalValue} 
             step={0.1}
             min={0}
             max={5}
@@ -111,7 +134,7 @@ const PadItem = ({ color, sound }) => {
         <MenuItem className={classes.menuItem}>
           <Slider
             className={classes.sliderStyle}
-            defaultValue={0} 
+            value={timerValue} 
             step={1}
             min={0}
             max={60}

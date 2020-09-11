@@ -1,11 +1,12 @@
-import React from 'react';
+import React,  { useState } from 'react';
 import ReactDOM from 'react-dom';
 import PadItem from './PadItem.jsx';
 import {
   makeStyles,
   CssBaseline,
   Typography,
-  Box
+  Box, 
+  Button
 } from '@material-ui';
 
 const pads = [
@@ -64,6 +65,12 @@ const App = () => {
   }))
 
   const classes = useStyles();
+  
+  const [allPlaying, setAllPlaying] = useState(false);
+  
+  const playOrStop = () => {
+    setAllPlaying(!allPlaying);
+  }
 
   return (
     <CssBaseline>
@@ -73,8 +80,13 @@ const App = () => {
         </Box>
         <Box className={classes. padsRoot}>
           {pads.map( ({color, sound}) => (
-            <PadItem color={color} sound={sound} />
+            <PadItem color={color} sound={sound} allPlaying={allPlaying} />
           ))}
+        </Box>
+        <Box>
+          <Button style={{color: '#fff'}} onClick={playOrStop}>
+            {allPlaying ? 'Stop' : 'Play'}
+          </Button>
         </Box>
       </Box>
     </CssBaseline>
