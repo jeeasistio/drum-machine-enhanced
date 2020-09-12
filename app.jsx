@@ -81,6 +81,7 @@ const App = () => {
     setResetted(true);
     setTimeout(() => setResetted(false), 500);
     setDialogIsOpen(false);
+    setAllPlaying(false);
   }
 
   return (
