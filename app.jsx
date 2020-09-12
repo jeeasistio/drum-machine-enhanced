@@ -1,14 +1,14 @@
-import React,  { useState } from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import PadItem from './PadItem.jsx';
 import {
   makeStyles,
   CssBaseline,
   Typography,
-  Box, 
-  Button, 
-  Dialog, 
-  DialogContent, 
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
   DialogActions
 } from '@material-ui';
 
@@ -68,15 +68,15 @@ const App = () => {
   }))
 
   const classes = useStyles();
-  
+
   const [allPlaying, setAllPlaying] = useState(false);
   const [resetted, setResetted] = useState(false);
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  
+
   const playOrStop = () => {
     setAllPlaying(!allPlaying);
   }
-  
+
   const resetFunc = () => {
     setResetted(true);
     setTimeout(() => setResetted(false), 500);

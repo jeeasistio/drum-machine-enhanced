@@ -11,7 +11,7 @@ import {
 
 const PadItem = ({ color, sound, allPlaying, resetted }) => {
 
-  const [play, {isPlaying}] = useSound(sound);
+  const [play, { isPlaying }] = useSound(sound);
 
   const useStyles = makeStyles(theme => ({
     padCtn: {
@@ -24,8 +24,8 @@ const PadItem = ({ color, sound, allPlaying, resetted }) => {
       minHeight: 60,
       maxHeight: 60,
       minWidth: 60,
-      maxWidth: 60, 
-      transform: isPlaying ? 'scale(1.2)' : 'scale(1)', 
+      maxWidth: 60,
+      transform: isPlaying ? 'scale(1.2)' : 'scale(1)',
       transition: 'transform 0.2s'
     },
     optionStyle: {
@@ -37,7 +37,7 @@ const PadItem = ({ color, sound, allPlaying, resetted }) => {
 
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState();
-  
+
   const openMenu = (e) => {
     setMenuIsOpen(!menuIsOpen);
     setMenuAnchor(e.target);

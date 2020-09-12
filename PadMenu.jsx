@@ -7,8 +7,8 @@ import {
   Typography
 } from '@material-ui';
 
-const PadMenu = ({ play, allPlaying, resetted, menuIsOpen, setMenuIsOpen, menuAnchor}) => {
-  
+const PadMenu = ({ play, allPlaying, resetted, menuIsOpen, setMenuIsOpen, menuAnchor }) => {
+
   const useStyles = makeStyles(theme => ({
     optionStyle: {
       color: '#ccc'
@@ -31,9 +31,9 @@ const PadMenu = ({ play, allPlaying, resetted, menuIsOpen, setMenuIsOpen, menuAn
       }
     }
   }))
-  
+
   const classes = useStyles();
-  
+
   const [intervalValue, setIntervalValue] = useState(0);
   const [timerValue, setTimerValue] = useState(0);
   const [delayValue, setDelayValue] = useState(0);
@@ -42,10 +42,10 @@ const PadMenu = ({ play, allPlaying, resetted, menuIsOpen, setMenuIsOpen, menuAn
     tim: 0,
     del: 0
   });
-  
+
   const playInterval = useRef();
   const playTimeout = useRef();
-  
+
   const start = () => {
     setTimeout(() => {
       play();
@@ -57,19 +57,19 @@ const PadMenu = ({ play, allPlaying, resetted, menuIsOpen, setMenuIsOpen, menuAn
       }, playOpt.tim * 1000)
     }, playOpt.del * 1000)
   }
-  
+
   const stop = () => {
     clearInterval(playInterval.current);
   }
-  
+
   const playBeat = () => {
     setPlayOpt({
-      int: intervalValue, 
+      int: intervalValue,
       tim: timerValue,
       del: delayValue
-    }) 
+    })
   }
-  
+
   const stopBeat = () => {
     setPlayOpt({
       int: 0,
@@ -78,28 +78,28 @@ const PadMenu = ({ play, allPlaying, resetted, menuIsOpen, setMenuIsOpen, menuAn
     })
     stop();
   }
-  
+
   const resetConfig = () => {
     setIntervalValue(0);
     setTimerValue(0);
     setDelayValue(0);
   }
-  
+
   useEffect(() => {
     playOpt.int <= 0 ? stop() : start();
   }, [playOpt.int, playOpt.tim])
-  
+
   useEffect(() => {
     allPlaying ? playBeat() : stopBeat();
   }, [allPlaying])
-  
+
   useEffect(() => {
-     if (resetted) {
-       resetConfig();
-       stopBeat();
-     }
+    if (resetted) {
+      resetConfig();
+      stopBeat();
+    }
   }, [resetted])
-  
+
   return (
     <Menu
       classes={{paper: classes.menuRoot}}
